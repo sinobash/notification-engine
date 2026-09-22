@@ -16,13 +16,14 @@ import com.sinobash.api.notification_engine.notification.infrastructure.KafkaNot
 import com.sinobash.api.notification_engine.notification.infrastructure.NotificationEvent;
 import com.sinobash.api.notification_engine.notification.infrastructure.NotificationEventPublisher;
 import com.sinobash.api.notification_engine.notification.infrastructure.NotificationRepository;
+import com.sinobash.api.notification_engine.template.application.TemplateRenderer;
 
 @Component 
 public class NotificationConsumer {
     private final NotificationRepository repository; 
     private final DeliveryAuditRepository audit; 
     private final StringRedisTemplate redis; 
-    // private final TemplateRenderer renderer; 
+    private final TemplateRenderer renderer; 
     private final ChannelDispatcher dispatcher; 
     private final NotificationEventPublisher publisher;
 
@@ -30,14 +31,14 @@ public class NotificationConsumer {
         NotificationRepository repository, 
         DeliveryAuditRepository audit, 
         StringRedisTemplate redis, 
-        // TemplateRenderer renderer, 
+        TemplateRenderer renderer, 
         ChannelDispatcher dispatcher, 
         NotificationEventPublisher publisher
     ) {
         this.repository = repository;
         this.audit = audit;
         this.redis = redis;
-        // this.renderer = renderer;
+        this.renderer = renderer;
         this.dispatcher = dispatcher;
         this.publisher = publisher;
     }
@@ -74,8 +75,7 @@ public class NotificationConsumer {
             repository.save(n); 
             audit.save(new DeliveryAudit(n.getId(), old, n.getStatus(), "dispatching"));
             
-            // String body = renderer.render(n); 
-            String body = ""; 
+            String body = renderer.render(n);
             dispatcher.dispatch(n.getChannel(), n.getRecipient(), body);
             
             old = n.getStatus(); 
@@ -83,7 +83,7 @@ public class NotificationConsumer {
             repository.save(n); 
             audit.save(new DeliveryAudit(n.getId(), old, n.getStatus(), "delivered"));
         } catch(Exception ex) { 
-            handleFailure(n,ex); 
+            handleFailure(n, ex); 
         } finally { 
             redis.delete(lock); 
         }

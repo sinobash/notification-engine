@@ -3,6 +3,9 @@ package com.sinobash.api.notification_engine.notification.domain;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -56,9 +59,11 @@ public class Notification {
     private String body;
     
     @Column(columnDefinition = "jsonb") 
+    @JdbcTypeCode(SqlTypes.JSON) // This forces the driver to convert String to JSONB
     private String templateParams;
     
     @Column(columnDefinition = "jsonb") 
+    @JdbcTypeCode(SqlTypes.JSON) // This forces the driver to convert String to JSONB
     private String metadata;
     
     @Column(name = "retry_count", nullable = false) 
