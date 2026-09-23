@@ -127,4 +127,4 @@ http://localhost:8080/actuator/prometheus
 
 ## Delivery adapters
 
-Email is implemented through Spring Mail when enabled. SMS and Push are logging adapters for the first 1–2 day MVP. All channels are behind `ChannelDispatcher`, so Twilio, AWS SNS, FCM, APNs, etc. can be added without changing the notification domain or public API.
+Email is implemented through Spring Mail when enabled. SMS and Push are logging adapters for MVP. All channels are behind `ChannelDispatcher`, so Twilio, AWS SNS, FCM, APNs, etc. can be added without changing the notification domain or public API.
